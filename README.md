@@ -194,3 +194,46 @@ git pull
 * Внутри файла HEAD находится ссылка на служебный файл refs/heads/master, содержащий хеш последнего коммита.
 *  При работе с Git указатель HEAD используется часто, его можно заменить на слово HEAD для передачи последнего коммита.
  
+# Статусы файлов в Git
+```mermaid
+stateDiagram-v2
+    [*] --> Untracked: Создание файла\n(echo "text" > file.txt)
+    Untracked --> Staged: git add <file>
+    Untracked --> [*]: git rm --cached <file>\n(если был в .gitignore)
+    
+    Staged --> Modified: Изменение файла\n(vim/nano/edit)
+    Staged --> Committed: git commit -m "..."
+    Staged --> Untracked: git rm --cached <file>
+    
+    Modified --> Staged: git add <file>
+    Modified --> Untracked: git rm --cached <file>
+    Modified --> [*]: git rm <file>\n(удалить из репозитория)
+    
+    Committed --> Modified: Изменение файла\nпосле коммита
+    Committed --> [*]: git rm <file>\n+ git commit
+    
+    note right of Untracked
+        Состояния:
+        - Красный в git status (не отслеживается)
+        - Не в индексе Git
+    end note
+    
+    note left of Staged
+        Состояния:
+        - Зелёный в git status
+        - В индексе (git add)
+        - Готов к коммиту
+    end note
+    
+    note left of Modified
+        Состояния:
+        - Красный в git status (изменён)
+        - Отслеживается, но изменения не добавлены в индекс
+    end note
+    
+    note right of Committed
+        Состояния:
+        - Зафиксирован в репозитории
+        - Виден в git log
+    end note
+  ```
